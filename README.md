@@ -1,11 +1,11 @@
-#Test App using Google Maps API Services
+# Test App using Google Maps API Services
 
 
-##Requirements
+## Requirements
 
 Python 3.x is required for this project.
 
-##Project Setup
+## Project Setup
 
 ***1. Clone the project***
 

@@ -8,14 +8,16 @@ from django.forms.models import model_to_dict
 from .serializers import AddressSerializer
 from rest_framework.parsers import MultiPartParser
 
-from .utils.convertAddress import *
+from .utils.convertAddress import reverseAddress
 
 class AddressView(APIView):
     def post(self, request):
-        request.data['full_address'] = fullAddress(request.data)
-        request.data['lattitude'], request.data['longitude'], request.data['latLong'] = geocodeAddress(request.data['full_address'])
+        lat = request.data['lat']
+        lng = request.data['lng']
 
-        serializer_class = AddressSerializer(data=request.data)
+        data = reverseAddress(lat, lng)
+
+        serializer_class = AddressSerializer(data=data)
 
         if serializer_class.is_valid():
             serializer_class.save()

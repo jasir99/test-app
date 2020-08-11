@@ -29,7 +29,12 @@ def fullAddress(data):
 
 def geocodeAddress(address):
     geocode_result = gmaps.geocode(address)[0]['geometry']['location']
-    lat = geocode_result['lat']
-    lng = geocode_result['lng']
-    return lat, lng, '{}{}'.format(int(lat), int(lng))
+    lat = int(geocode_result['lat'] * 10)
+    lng = int(geocode_result['lng'] * 10)
+
+    if lat < 0:
+        lat = 'n{}'.format(abs(lat))
+    if lng < 0:
+        lng = 'n{}'.format(abs(lng))
+    return geocode_result['lat'], geocode_result['lng'], '{}m{}'.format(lat, lng)
 

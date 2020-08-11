@@ -2,3 +2,4 @@ Django
 djangorestframework
 googlemaps
 psycopg2
+django-cors-headers

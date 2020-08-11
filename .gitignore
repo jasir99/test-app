@@ -146,5 +146,4 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
-keys.py
 .idea/

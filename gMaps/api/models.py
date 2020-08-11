@@ -10,3 +10,4 @@ class Address(models.Model):
     full_address = models.CharField(max_length=100)
     lattitude = models.FloatField()
     longitude = models.FloatField()
+    latLong = models.CharField(max_length=20)

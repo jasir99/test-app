@@ -15,7 +15,13 @@ class AddressView(APIView):
         lat = request.data['lat']
         lng = request.data['lng']
 
+
         data = reverseAddress(lat, lng)
+
+        if 'name' in request.data:
+            data['property_name'] = request.data['name']
+        if 'description' in request.data:
+            data['property_description'] = request.data['description']
 
         serializer_class = AddressSerializer(data=data)
 

@@ -1,6 +1,8 @@
 from django.db import models
 
 class Address(models.Model):
+    property_name = models.CharField(max_length=100, null=True)
+    property_description = models.CharField(max_length=3000, null=True)
     country = models.CharField(max_length=100)
     state = models.CharField(max_length=100, null=True)
     administrative = models.CharField(max_length=100, null=True)

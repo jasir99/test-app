@@ -1,6 +1,6 @@
 from django.db import models
 
-class Address(models.Model):
+class PropertyAddress(models.Model):
     property_description = models.CharField(max_length=3000, null=True)
     country = models.CharField(max_length=100)
     administrative_area_level_1 = models.CharField(max_length=100, null=True)
@@ -16,3 +16,8 @@ class Address(models.Model):
     lattitude = models.FloatField()
     longitude = models.FloatField()
     latLong = models.CharField(max_length=20)
+
+class PropertyImage(models.Model):
+    property = models.ForeignKey(PropertyAddress,related_name = 'images')
+    image = models.ImageField() 
+    

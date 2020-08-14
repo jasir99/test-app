@@ -17,6 +17,9 @@ class PropertyAddress(models.Model):
     longitude = models.FloatField()
     latLong = models.CharField(max_length=20)
 
+    def save(self, *args, **kwargs):
+        super(PropertyAddress, self).save(*args, **kwargs)
+
 class PropertyImage(models.Model):
     property = models.ForeignKey(PropertyAddress,related_name = 'images',on_delete=models.CASCADE)
     image = models.ImageField() 

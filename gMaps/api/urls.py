@@ -1,5 +1,5 @@
 from django.urls import path
-from .models import Address
+from .models import PropertyAddress,PropertyImage
 from api import views
 
 urlpatterns = [

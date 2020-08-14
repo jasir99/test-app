@@ -18,6 +18,8 @@ class PropertyAddress(models.Model):
     latLong = models.CharField(max_length=20)
 
 class PropertyImage(models.Model):
-    property = models.ForeignKey(PropertyAddress,related_name = 'images')
+    property = models.ForeignKey(PropertyAddress,related_name = 'images',on_delete=models.CASCADE)
     image = models.ImageField() 
     
+    def __str__(self):
+        return self.image

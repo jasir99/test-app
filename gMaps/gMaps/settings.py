@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
+# import django_heroku
 
 
 
@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'gMaps.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test-ap-db',
+        'NAME': 'testap',
         'USER': 'postgres',
-        'PASSWORD': 'jasir123',
+        'PASSWORD': 'astrit',
         'HOST': 'localhost'
     }
 }
@@ -132,8 +132,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
 
-import dj_database_url
-prod_db  =  dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(prod_db)
+# import dj_database_url
+# prod_db  =  dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(prod_db)

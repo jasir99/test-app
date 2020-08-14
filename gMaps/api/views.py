@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.views import APIView
 
-from .models import Address
+from .models import PropertyAddress,PropertyImage
 from django.forms.models import model_to_dict
 from .serializers import AddressSerializer
 from rest_framework.parsers import MultiPartParser
@@ -35,3 +35,5 @@ class AddressView(APIView):
             address = Address.objects.all()
         serializer_class = AddressSerializer(address,many=True)
         return JsonResponse({'status': True, 'msg': 'Succesfully retrived categories', 'data': serializer_class.data},status=200)
+
+# class ImageView(APIView)

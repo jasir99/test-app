@@ -12,7 +12,7 @@ from .utils.convertAddress import reverseAddress
 class PropertyAddressView(viewsets.ViewSet):
 
     def get_queryset(self):
-        latLong = self.request.query_params.get('latL   ng')
+        latLong = self.request.query_params.get('latLng')
         if latLong is None:
             queryset = PropertyAddress.objects.all()
         else:

@@ -6,35 +6,6 @@ from .keys import getGoogleMapsApiKey
 
 gmaps = googlemaps.Client(key=getGoogleMapsApiKey())
 
-
-def fullAddress(data):
-    street = data['street']
-    city = data['city']
-    country = data['country']
-
-
-
-    if data['street_number']:
-        street_number = data['street_number']
-        street = '{} {}'.format(street_number, street)
-
-
-    if data['zip_code']:
-        zip_code = data['zip_code']
-        city = '{} {}'.format(zip_code, data['city'])
-
-
-    if data['state']:
-        state = data['state']
-        country = '{}, {}'.format(state, country)
-
-    if data['administrative']:
-        administrative = data['administrative']
-        country = '{}, {}'.format(administrative, country)
-
-    return "{}, {}, {}".format(street, city, country)
-
-
 def shortGeoCode(lat, lng):
     lat = int(lat)
     lng = int(lng)
@@ -45,11 +16,11 @@ def shortGeoCode(lat, lng):
     return '{}m{}'.format(lat, lng)
 
 
-def reverseAddress(lat, lng):
+def reverseAddress(lat, lng, autocomplete_address):
     lat = float(lat)
     lng = float(lng)
     street_number = None
-    street = ''
+    street = None
     city = None
     administrative_area_level_1 = None
     administrative_area_level_2 = None
@@ -73,7 +44,7 @@ def reverseAddress(lat, lng):
         if 'administrative_area_level_1' in n['types']:
             administrative_area_level_1 = n['long_name']
             continue
-        if 'administrative_area_level_2' in n['types'] and administrative != '':
+        if 'administrative_area_level_2' in n['types']:
             administrative_area_level_2 = n['long_name']
             continue
         if 'administrative_area_level_3' in n['types']:
@@ -93,7 +64,8 @@ def reverseAddress(lat, lng):
             continue
 
     if city is None:
-        city = administrative
+        city = administrative_area_level_1
+
     data = {
         'street_number': street_number,
         'street': street,
@@ -106,7 +78,8 @@ def reverseAddress(lat, lng):
         'country': country,
         'zip_code': zip_code,
         'full_address': geocode_result['formatted_address'],
-        'lattitude': lat,
+        'autocomplete_address': autocomplete_address,
+        'latitude': lat,
         'longitude': lng,
         'latLong': shortGeoCode(lat, lng)
     }

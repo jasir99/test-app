@@ -1,8 +1,8 @@
 from django.urls import path
-from .models import Address
+from rest_framework.routers import DefaultRouter
 from api import views
 
-urlpatterns = [
-    path('address/', views.AddressView.as_view(), name='address'),
-    path('address/<str:latLong>', views.AddressView.as_view(), name='address1'),
-]
+router = DefaultRouter()
+router.register('address', views.PropertyAddressView, basename='address')
+router.register('images', views.PropertyImageView, basename='image')
+urlpatterns = router.urls

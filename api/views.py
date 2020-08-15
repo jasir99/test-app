@@ -6,17 +6,19 @@ from rest_framework import viewsets
 from .models import PropertyAddress, PropertyImage
 from .serializers import PropertyAddressSerializer, PropertyImageSerializer, PropertyAddressSerializerWithImages
 
-from .utils.convertAddress import reverseAddress
+from .utils.convertAddress import reverseAddress, getCity
 
 
 class PropertyAddressView(viewsets.ViewSet):
 
     def get_queryset(self):
-        latLong = self.request.query_params.get('latLng')
-        if latLong is None:
+        lat = self.request.query_params.get('lat')
+        lng = self.request.query_params.get('lng')
+        if lat is None or lng is None:
             queryset = PropertyAddress.objects.all()
         else:
-            queryset = PropertyAddress.objects.filter(latLong=latLong)
+            city = getCity(lat, lng)
+            queryset = PropertyAddress.objects.filter(city=city)
         return queryset
 
     def list(self, request):

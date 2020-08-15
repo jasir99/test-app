@@ -85,5 +85,10 @@ def reverseAddress(lat, lng, autocomplete_address):
     }
     return data
 
-
+def getCity(lat,lng):
+    geocode_result = gmaps.reverse_geocode((lat, lng))[0]['address_components']
+    for n in geocode_result:
+        if 'locality' in n['types'] or 'postal_town' in n['types'] or 'neighborhood' in n['types']:
+            city = n['long_name']
+            return city
 

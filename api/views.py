@@ -57,7 +57,7 @@ class PropertyAddressView(viewsets.ViewSet):
         return JsonResponse({'delete': True, 'data': serializer.data})
 
 
-class PropertyImageView(viewsets.ViewSet):g
+class PropertyImageView(viewsets.ViewSet):
 
     def list(self, request):
         queryset = PropertyImage.objects.all()

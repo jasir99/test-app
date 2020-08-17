@@ -57,7 +57,7 @@ class PropertyAddressView(viewsets.ViewSet):
         return JsonResponse({'delete': True, 'data': serializer.data})
 
 
-class PropertyImageView(viewsets.ViewSet):
+class PropertyImageView(viewsets.ViewSet):g
 
     def list(self, request):
         queryset = PropertyImage.objects.all()
@@ -65,8 +65,14 @@ class PropertyImageView(viewsets.ViewSet):
         return JsonResponse({'status': True, 'msg': 'Succesfully retrived categories', 'data': image_serializer_class.data})
 
     def retrieve(self, request, pk=None):
-        queryset = PropertyImage.objects.filter(propertyAddress=pk)
-        image_serializer_class = PropertyImageSerializer(queryset, many=True)
+        one = self.request.query_params.get('one')
+        if one is not None:
+            queryset = PropertyImage.objects.filter(propertyAddress=pk).first()
+            image_serializer_class = PropertyImageSerializer(queryset)
+        else:
+            queryset = PropertyImage.objects.filter(propertyAddress=pk)
+            image_serializer_class = PropertyImageSerializer(queryset, many=True)
+
         return JsonResponse({'status': True, 'data': image_serializer_class.data})
 
     def create(self, request):

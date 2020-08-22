@@ -1,12 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
 from rest_framework import viewsets
 
 from .models import PropertyAddress, PropertyImage
-from .serializers import PropertyAddressSerializer, PropertyImageSerializer, PropertyAddressSerializerWithImages
+from .serializers import PropertyAddressSerializer, PropertyImageSerializer
 
-from .utils.convertAddress import reverseAddress, getCity
+from utils.convertAddress import reverseAddress, getCity
 
 
 class PropertyAddressView(viewsets.ViewSet):
@@ -23,21 +23,20 @@ class PropertyAddressView(viewsets.ViewSet):
 
     def list(self, request):
         queryset = self.get_queryset()
-        serializer = PropertyAddressSerializerWithImages(queryset, many=True)
-        return JsonResponse({'status': True, 'msg': 'Succesfully retrived categories', 'data': serializer.data})
+        serializer = PropertyAddressSerializer(queryset, many=True)
+        return JsonResponse({'status': True, 'msg': 'Successfully retrieved categories', 'data': serializer.data})
 
     def retrieve(self, request, pk=None):
         queryset = PropertyAddress.objects.all()
         address = get_object_or_404(queryset, pk=pk)
-        serializer = PropertyAddressSerializerWithImages(address)
+        serializer = PropertyAddressSerializer(address)
 
         return JsonResponse({'status': True, 'data': serializer.data})
 
     def create(self, request):
         lat = request.data['lat']
         lng = request.data['lng']
-        autocomplete_address = request.data['address']
-        data = reverseAddress(lat, lng, autocomplete_address)
+        data = reverseAddress(lat, lng)
 
         if 'description' in request.data:
             data['property_description'] = request.data['description']

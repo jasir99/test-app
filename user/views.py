@@ -4,7 +4,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, UserSerializer
 
 '''
   A class for registering users
@@ -48,3 +48,14 @@ class LoginAPI(ObtainAuthToken):
                 }
                 return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)
         return JsonResponse({'status': False, 'msg': 'Username or Password is incorect', 'data': {}}, status=200)
+
+
+class UserAPI(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user

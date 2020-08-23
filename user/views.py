@@ -59,7 +59,7 @@ class LoginAPI(ObtainAuthToken):
                     },
                 }
                 return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)
-        return JsonResponse({'status': False, 'msg': 'Username or Password is incorect', 'data': {}}, status=200)
+        return JsonResponse({'status': False, 'msg': 'Username or Password is incorect', 'data': {}}, status=401)
 
 
 '''

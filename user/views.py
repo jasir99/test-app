@@ -1,6 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 
@@ -63,6 +62,10 @@ class LoginAPI(ObtainAuthToken):
         return JsonResponse({'status': False, 'msg': 'Username or Password is incorect', 'data': {}}, status=200)
 
 
+'''
+  A class for logout user
+'''
+
 class LogOutAPI(APIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -71,11 +74,15 @@ class LogOutAPI(APIView):
     def get(self, request, format=None):
         try:
             request.user.auth_token.delete()
-        except (AttributeError, ObjectDoesNotExist):
+        except (AttributeError):
             pass
 
         return JsonResponse({'status': True, 'msg': 'Successfully logged out'})
 
+
+'''
+  A class for retrieving authenticated user
+'''
 
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [

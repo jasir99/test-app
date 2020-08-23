@@ -19,11 +19,17 @@ class RegisterAPI(APIView):
             if user:
                 token = Token.objects.create(user=user)
                 data = {
-                    'firstName': user.first_name,
-                    'lastName': user.last_name,
                     'token': token.key,
-                    'username': user.username,
-                    'password': user.password
+                    'user': {
+                        'userId': user.pk,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'username': user.username,
+                        'email': user.email,
+                        'address1': user.address1,
+                        'address2': user.address2,
+                        'phone_number': user.phone_number,
+                    },
                 }
                 return JsonResponse({'status': True, 'msg': 'Succesfully created user', 'data': data}, status=200)
         return JsonResponse({'status': False, 'msg': 'Could not create user', 'data': {}}, status=200)
@@ -42,12 +48,33 @@ class LoginAPI(ObtainAuthToken):
                 token, create = Token.objects.get_or_create(user=user)
                 data = {
                     'token': token.key,
-                    'userId': user.pk,
-                    'email': user.email,
-                    'password': user.password
+                    'user': {
+                        'userId': user.pk,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'username': user.username,
+                        'email': user.email,
+                        'address1': user.address1,
+                        'address2': user.address2,
+                        'phone_number': user.phone_number,
+                    },
                 }
                 return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)
         return JsonResponse({'status': False, 'msg': 'Username or Password is incorect', 'data': {}}, status=200)
+
+
+class LogOutAPI(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, format=None):
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+
+        return JsonResponse({'status': True, 'msg': 'Successfully logged out'})
 
 
 class UserAPI(generics.RetrieveAPIView):

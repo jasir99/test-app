@@ -41,24 +41,24 @@ class RegisterAPI(APIView):
 class LoginAPI(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            if user:
-                token, create = Token.objects.get_or_create(user=user)
-                data = {
-                    'token': token.key,
-                    'user': {
-                        'userId': user.pk,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'username': user.username,
-                        'email': user.email,
-                        'address1': user.address1,
-                        'address2': user.address2,
-                        'phone_number': user.phone_number,
-                    },
-                }
-                return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        if user:
+            token, create = Token.objects.get_or_create(user=user)
+            data = {
+                'token': token.key,
+                'user': {
+                    'userId': user.pk,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'username': user.username,
+                    'email': user.email,
+                    'address1': user.address1,
+                    'address2': user.address2,
+                    'phone_number': user.phone_number,
+                },
+            }
+            return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)
         return JsonResponse({'status': False, 'msg': 'Username or Password is incorect', 'data': {}}, status=401)
 
 

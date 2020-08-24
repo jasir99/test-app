@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 from .models import PropertyAddress, PropertyImage
 from .serializers import PropertyAddressSerializer, PropertyImageSerializer
+
+from user.serializers import UserSerializer
 
 from utils.convertAddress import reverseAddress, getCity
 
@@ -34,18 +36,31 @@ class PropertyAddressView(viewsets.ViewSet):
         return JsonResponse({'status': True, 'data': serializer.data})
 
     def create(self, request):
-        lat = request.data['lat']
-        lng = request.data['lng']
-        data = reverseAddress(lat, lng)
+        permission_classes = [
+            permissions.IsAuthenticated,
+        ]
+        user_serializer = UserSerializer
 
-        if 'description' in request.data:
-            data['property_description'] = request.data['description']
+        def isAuthenticated():
+            if self.request.user:
+                return self.request.user
+            return False
 
-        address_serializer_class = PropertyAddressSerializer(data=data)
+        user = isAuthenticated()
 
-        if address_serializer_class.is_valid():
-            address_serializer_class.save()
-            return JsonResponse(address_serializer_class.data, status=200)
+        if user:
+            lat = request.data['lat']
+            lng = request.data['lng']
+            data = reverseAddress(lat, lng)
+            data['user_id'] = user.id
+            if 'description' in request.data:
+                data['property_description'] = request.data['description']
+
+            address_serializer_class = PropertyAddressSerializer(data=data)
+
+            if address_serializer_class.is_valid():
+                address_serializer_class.save()
+                return JsonResponse(address_serializer_class.data, status=200)
         return JsonResponse(address_serializer_class.errors, status=400)
 
     def destroy(self, request, pk=None):

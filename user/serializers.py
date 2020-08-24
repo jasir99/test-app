@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from .models import User
+from api.serializers import PropertyAddressSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,7 +16,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         return client
 
 
+
 class UserSerializer(serializers.ModelSerializer):
+    addresses = PropertyAddressSerializer(many=True, required=False)
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'address1', 'address2', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'phone_number', 'address1', 'address2', 'first_name', 'last_name', 'image', 'addresses')

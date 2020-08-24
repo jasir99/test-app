@@ -19,8 +19,8 @@ def shortGeoCode(lat, lng):
 def reverseAddress(lat, lng):
     lat = float(lat)
     lng = float(lng)
-    city = None
-    country = None
+    city = 'Gostivar'
+    country = 'Macedonia'
 
     geocode_result = gmaps.reverse_geocode((lat, lng))[0]
     for n in geocode_result['address_components']:

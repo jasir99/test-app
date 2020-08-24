@@ -8,6 +8,7 @@ class User(AbstractUser):
     phone_number = models.CharField(verbose_name='phone number', max_length=50, unique=True)
     address1 = models.CharField(verbose_name='address 1', max_length=100)
     address2 = models.CharField(verbose_name='address 2', max_length=100, null=True)
+    image = models.ImageField(verbose_name='image', null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -21,4 +22,5 @@ class User(AbstractUser):
     def get_short_name(self):
         return self.email
 
-        # TODO create a super user
+
+

@@ -17,7 +17,7 @@ def get_env(argument):
     elif argument == 'DATABASE_PASSWORD':
         DB_PASSWORD = os.environ.get(argument)
         if DB_PASSWORD is None:
-            return 'jasir123'
+            return 'astrit'
         return DB_PASSWORD
 
     elif argument == 'DATABASE':

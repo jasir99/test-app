@@ -71,7 +71,7 @@ class LogOutAPI(APIView):
         permissions.IsAuthenticated,
     ]
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         try:
             request.user.auth_token.delete()
         except (AttributeError):

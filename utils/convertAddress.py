@@ -19,9 +19,9 @@ def shortGeoCode(lat, lng):
 def reverseAddress(lat, lng):
     lat = float(lat)
     lng = float(lng)
-    city = 'Gostivar'
-    country = 'Macedonia'
-
+    city = None
+    country = None
+    administrative = None
     geocode_result = gmaps.reverse_geocode((lat, lng))[0]
     for n in geocode_result['address_components']:
         if 'locality' in n['types'] or 'postal_town' in n['types'] or 'neighborhood' in n['types']:
@@ -30,6 +30,11 @@ def reverseAddress(lat, lng):
         if 'country' in n['types']:
             country = n['long_name']
             continue
+        if 'administrative_area_level_1' in n['types']:
+            administrative = n['long_name']
+
+    if city is None:
+        city = administrative
 
     data = {
         'city': city,
@@ -42,8 +47,15 @@ def reverseAddress(lat, lng):
 
 def getCity(lat,lng):
     geocode_result = gmaps.reverse_geocode((lat, lng))[0]['address_components']
+    city = None
+    administrative = None
     for n in geocode_result:
         if 'locality' in n['types'] or 'postal_town' in n['types'] or 'neighborhood' in n['types']:
             city = n['long_name']
-            return city
+            break
+        if 'administrative_area_level_1' in n['types']:
+            administrative = n['long_name']
 
+    if city is None:
+        return administrative
+    return city

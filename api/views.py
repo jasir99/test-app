@@ -1,12 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 
-from .models import PropertyAddress, PropertyImage
-from .serializers import PropertyAddressSerializer, PropertyImageSerializer
+from .models import PropertyAddress, PropertyImage, PropertyReview
+from .serializers import PropertyAddressSerializer, PropertyImageSerializer, PropertyReviewSerializer
 
-from user.serializers import UserSerializer
 
 from utils.convertAddress import reverseAddress, getCity
 
@@ -35,32 +34,23 @@ class PropertyAddressView(viewsets.ViewSet):
 
         return JsonResponse({'status': True, 'data': serializer.data})
 
+
     def create(self, request):
-        permission_classes = [
-            permissions.IsAuthenticated,
-        ]
-        user_serializer = UserSerializer
+        user = self.request.user
+        lat = request.data['lat']
+        lng = request.data['lng']
+        data = reverseAddress(lat, lng)
 
-        def isAuthenticated():
-            if self.request.user:
-                return self.request.user
-            return False
+        data['user'] = user.id
 
-        user = isAuthenticated()
+        if 'description' in request.data:
+            data['property_description'] = request.data['description']
 
-        if user:
-            lat = request.data['lat']
-            lng = request.data['lng']
-            data = reverseAddress(lat, lng)
-            data['user_id'] = user.id
-            if 'description' in request.data:
-                data['property_description'] = request.data['description']
+        address_serializer_class = PropertyAddressSerializer(data=data)
 
-            address_serializer_class = PropertyAddressSerializer(data=data)
-
-            if address_serializer_class.is_valid():
-                address_serializer_class.save()
-                return JsonResponse(address_serializer_class.data, status=200)
+        if address_serializer_class.is_valid():
+            address_serializer_class.save()
+            return JsonResponse(address_serializer_class.data, status=200)
         return JsonResponse(address_serializer_class.errors, status=400)
 
     def destroy(self, request, pk=None):
@@ -96,3 +86,28 @@ class PropertyImageView(viewsets.ViewSet):
         serializer = PropertyImageSerializer(image)
         image.delete()
         return JsonResponse({'delete': True, 'data': serializer.data})
+
+
+class PropertyReviewView(viewsets.ViewSet):
+    def list(self, request):
+        queryset = PropertyReview.objects.all()
+        review_serializer_class = PropertyReviewSerializer(queryset, many=True)
+        return JsonResponse(
+            {'status': True, 'msg': 'Succesfully retrived categories', 'data': review_serializer_class.data})
+
+    def retrieve(self, request, pk=None):
+        queryset = PropertyReview.objects.filter(propertyAddress=pk)
+        review_serializer_class = PropertyReviewSerializer(queryset, many=True)
+        return JsonResponse({'status': True, 'data': review_serializer_class.data})
+
+    def create(self, request):
+
+        user = self.request.user
+
+        data = request.data
+        data['user_id'] = user.id
+        review_serializer_class = PropertyReviewSerializer(data=data)
+        if review_serializer_class.is_valid():
+            review_serializer_class.save()
+            return JsonResponse({'status': True, 'data': review_serializer_class.data}, status=200)
+        return JsonResponse({'status': False, 'data': review_serializer_class.errors}, status=400)

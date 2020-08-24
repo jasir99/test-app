@@ -71,13 +71,13 @@ class LogOutAPI(APIView):
         permissions.IsAuthenticated,
     ]
 
-    def post(self, request, format=None):
+    def get(self, request, format=None):
         try:
             request.user.auth_token.delete()
         except (AttributeError):
             pass
 
-        return JsonResponse({'status': True, 'msg': 'Successfully logged out'})
+        return JsonResponse({'status': True, 'msg': 'Successfully logged out'}, status=200)
 
 
 '''

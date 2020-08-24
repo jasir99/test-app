@@ -9,7 +9,7 @@ class PropertyAddress(models.Model):
     full_address = models.CharField(max_length=250)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    user_id = models.ForeignKey(User, related_name='user_id', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='user_id', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (('latitude', 'longitude'),)
@@ -20,13 +20,11 @@ class PropertyImage(models.Model):
     image = models.ImageField(upload_to='property_images')
 
 
-
-
 class PropertyReview(models.Model):
     content = models.CharField(verbose_name='content', max_length=2000)
     rating = models.PositiveSmallIntegerField(verbose_name='rating')
-    address_id = models.ForeignKey(PropertyAddress, related_name='property', on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
+    propertyAddress = models.ForeignKey(PropertyAddress, related_name='reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = (('address_id', 'user_id'))
+        unique_together = (('propertyAddress', 'user'))

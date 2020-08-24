@@ -18,7 +18,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    addresses = PropertyAddressSerializer(many=True, required=False)
+    properties = PropertyAddressSerializer(many=True, required=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'address1', 'address2', 'first_name', 'last_name', 'image', 'addresses')
+        fields = ('id', 'username', 'email', 'phone_number', 'address1', 'address2', 'first_name', 'last_name', 'image', 'properties')

@@ -13,25 +13,25 @@ from .serializers import RegisterSerializer, UserSerializer
 class RegisterAPI(APIView):
     def post(self, request, format='json'):
         serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            if user:
-                token = Token.objects.create(user=user)
-                data = {
-                    'token': token.key,
-                    'user': {
-                        'userId': user.pk,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'username': user.username,
-                        'email': user.email,
-                        'address1': user.address1,
-                        'address2': user.address2,
-                        'phone_number': user.phone_number,
-                    },
-                }
-                return JsonResponse({'status': True, 'msg': 'Succesfully created user', 'data': data}, status=200)
-        return JsonResponse({'status': False, 'msg': 'Could not create user', 'data': {}}, status=200)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        if user:
+            token = Token.objects.create(user=user)
+            data = {
+                'token': token.key,
+                'user': {
+                    'userId': user.pk,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'username': user.username,
+                    'email': user.email,
+                    'address1': user.address1,
+                    'address2': user.address2,
+                    'phone_number': user.phone_number,
+                },
+            }
+            return JsonResponse({'status': True, 'msg': 'Succesfully created user', 'data': data}, status=200)
+        return JsonResponse({'status': False, 'msg': 'Could not create user', 'data': {}}, status=400)
 
 
 '''

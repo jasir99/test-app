@@ -3,7 +3,9 @@ from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 
-from .serializers import RegisterSerializer, UserSerializer
+from api.views import PropertyAddressView
+
+from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
 
 '''
   A class for registering users
@@ -39,10 +41,13 @@ class RegisterAPI(APIView):
 '''
 
 class LoginAPI(ObtainAuthToken):
+    serializer_class = LoginSerializer
     def post(self, request, *args, **kwargs):
+
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        properties = serializer.validated_data['properties']
         if user:
             token, create = Token.objects.get_or_create(user=user)
             data = {
@@ -56,7 +61,7 @@ class LoginAPI(ObtainAuthToken):
                     'address1': user.address1,
                     'address2': user.address2,
                     'phone_number': user.phone_number,
-                    'properties': user.properties,
+                    'properties': properties
                 },
             }
             return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)

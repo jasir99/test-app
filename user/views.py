@@ -56,6 +56,7 @@ class LoginAPI(ObtainAuthToken):
                     'address1': user.address1,
                     'address2': user.address2,
                     'phone_number': user.phone_number,
+                    'properties': user.properties,
                 },
             }
             return JsonResponse({'status': True, 'msg': 'Succesfully logged in user', 'data': data}, status=200)

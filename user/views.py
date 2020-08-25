@@ -14,6 +14,8 @@ from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
 
 class RegisterAPI(APIView):
     def post(self, request, format='json'):
+        if 'is_staff' in request.data and request.data['is_staff'] or 'is_superuser' in request.data and request.data['is_superuser']:
+            return JsonResponse({'status': False, 'msg': 'Unautorized request', 'data': {}}, status=200)
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()

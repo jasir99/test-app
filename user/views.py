@@ -36,12 +36,8 @@ class RegisterAPI(APIView):
                 'token': token.key,
                 'user': {
                     'userId': user.pk,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
                     'username': user.username,
                     'email': user.email,
-                    # 'address1': user.address1,
-                    # 'address2': user.address2,
                     'phone_number': user.phone_number,
                 },
             }

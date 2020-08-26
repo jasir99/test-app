@@ -15,8 +15,6 @@ class ValidateAPI(APIView):
     def post(self, request, format='json'):
         if 'email' in request.data:
             validate_class = EmailValidator(data=request.data)
-        elif 'username' in request.data:
-            validate_class = UserNameValidator(data=request.data)
         else:
             validate_class = PhoneValidator(data=request.data)
         validate_class.is_valid(raise_exception=True)

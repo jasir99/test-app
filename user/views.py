@@ -40,8 +40,8 @@ class RegisterAPI(APIView):
                     'last_name': user.last_name,
                     'username': user.username,
                     'email': user.email,
-                    'address1': user.address1,
-                    'address2': user.address2,
+                    # 'address1': user.address1,
+                    # 'address2': user.address2,
                     'phone_number': user.phone_number,
                 },
             }
@@ -71,8 +71,8 @@ class LoginAPI(ObtainAuthToken):
                     'last_name': user.last_name,
                     'username': user.username,
                     'email': user.email,
-                    'address1': user.address1,
-                    'address2': user.address2,
+                    # 'address1': user.address1,
+                    # 'address2': user.address2,
                     'phone_number': user.phone_number,
                     'properties': properties
                 },

@@ -12,7 +12,7 @@ from api.models import PropertyAddress
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('email', 'password', 'username', 'phone_number')
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'address1', 'address2', 'first_name', 'last_name', 'image',
+        fields = ('id', 'username', 'email', 'phone_number',  'first_name', 'last_name', 'image',
                   'properties')
 
 

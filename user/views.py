@@ -3,13 +3,24 @@ from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 
-from api.views import PropertyAddressView
+from .forms import EmailValidator, UserNameValidator, PhoneValidator
 
 from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
 
 '''
   A class for registering users
 '''
+
+class ValidateAPI(APIView):
+    def post(self, request, format='json'):
+        if 'email' in request.data:
+            validate_class = EmailValidator(data=request.data)
+        elif 'username' in request.data:
+            validate_class = UserNameValidator(data=request.data)
+        else:
+            validate_class = PhoneValidator(data=request.data)
+        validate_class.is_valid(raise_exception=True)
+        return JsonResponse({ 'msg': request.data}, status=200)
 
 
 class RegisterAPI(APIView):

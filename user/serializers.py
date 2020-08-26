@@ -51,3 +51,4 @@ class LoginSerializer(serializers.ModelSerializer):
             'user': user,
             'properties': properties_serializer.data
         }
+

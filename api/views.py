@@ -105,7 +105,7 @@ class PropertyReviewView(viewsets.ViewSet):
         user = self.request.user
 
         data = request.data
-        data['user_id'] = user.id
+        data['user'] = user.id
         review_serializer_class = PropertyReviewSerializer(data=data)
         if review_serializer_class.is_valid():
             review_serializer_class.save()

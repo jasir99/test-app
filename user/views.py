@@ -111,22 +111,20 @@ class UserAPI(generics.RetrieveAPIView):
 
 class RequestPasswordResetEmailAPI(APIView):
   def post(self,request,*args,**kwargs):
-    email = request.data['email']
-    queryset = User.objects.filter(email=email)
-    serializer = ResetPasswordEmailRequestSerializer(queryset, many=False)
-    print(serializer.data)
-    print(serializer.data)
-    token, create = Token.objects.get_or_create(user=user)
-    return JsonResponse({ 'status': True, 'data': token.key, 'msg': 'We have sent you a link to reset youre password!' }, status=200)
-
+    serializer = ResetPasswordEmailRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data
+        token, create = Token.objects.get_or_create(user=user)
+        return JsonResponse({ 'status': True, 'data': token.key, 'msg': 'We have sent you a link to reset your password!' }, status=200)
+    return JsonResponse({'status': False, 'msg': 'No registered user with this email!'}, status=400)
 
 class SetNewPassword(APIView):
     def post(self, request):
         user = self.request.user
-        password = ''
-        if user:
+        if not user.is_anonymous:
             password = request.data['password']
             user.set_password(password)
             user.save()
             request.user.auth_token.delete()
-        return JsonResponse({'status': True, 'msg': 'Password changed', 'data':password}, status=200)
+            return JsonResponse({'status': True, 'msg': 'Password changed'}, status=200)
+        return JsonResponse({'status': False, 'msg':'No token was provided'}, status=401)

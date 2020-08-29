@@ -62,19 +62,18 @@ def get_and_authenticate_user(email, password):
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=300, required=True)
     class Meta:
         model = User
         fields = ('email',)
 
-    # def validate(self, attrs):
-    #     email = attrs.get('email')
-    #     print(email)
-    #     user = User.objects.filter(email=email)
-    #     print(user)
-    #     if user is None:
-    #         raise serializers.ValidationError('A user with this email is not found.')
-    #
-    #     return user
+    def validate(self, attrs):
+        email = attrs.get('email')
+        user = User.objects.filter(email=email).first()
+        if user is None:
+            raise serializers.ValidationError('A user with this email is not found.')
+
+        return user
 
 
 class NewPasswordSerializer(serializers.Serializer):

@@ -7,4 +7,6 @@ urlpatterns = [
     path('user/auth', views.UserAPI.as_view(), name='auth'),
     path('user/logout', views.LogOutAPI.as_view(), name='logout'),
     path('user/validate', views.ValidateAPI.as_view(), name='validate'),
+    path('user/forget/password', views.RequestPasswordResetEmailAPI.as_view(), name='forgetPassword'),
+    path('user/make/password', views.SetNewPassword.as_view(), name='newPassword'),
 ]

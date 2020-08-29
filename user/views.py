@@ -2,10 +2,11 @@ from django.http import JsonResponse
 from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
+from .models import User
+from .forms import EmailValidator, PhoneValidator
+from django.contrib.auth.hashers import make_password
 
-from .forms import EmailValidator, UserNameValidator, PhoneValidator
-
-from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
+from .serializers import RegisterSerializer, UserSerializer, LoginSerializer,ResetPasswordEmailRequestSerializer, NewPasswordSerializer
 
 '''
   A class for registering users
@@ -106,3 +107,26 @@ class UserAPI(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class RequestPasswordResetEmailAPI(APIView):
+  def post(self,request,*args,**kwargs):
+    email = request.data['email']
+    queryset = User.objects.filter(email=email)
+    serializer = ResetPasswordEmailRequestSerializer(queryset, many=False)
+    print(serializer.data)
+    print(serializer.data)
+    token, create = Token.objects.get_or_create(user=user)
+    return JsonResponse({ 'status': True, 'data': token.key, 'msg': 'We have sent you a link to reset youre password!' }, status=200)
+
+
+class SetNewPassword(APIView):
+    def post(self, request):
+        user = self.request.user
+        password = ''
+        if user:
+            password = request.data['password']
+            user.set_password(password)
+            user.save()
+            request.user.auth_token.delete()
+        return JsonResponse({'status': True, 'msg': 'Password changed', 'data':password}, status=200)

@@ -59,3 +59,29 @@ def get_and_authenticate_user(email, password):
     if user is None:
         raise serializers.ValidationError("Invalid username/password. Please try again!")
     return user
+
+
+class ResetPasswordEmailRequestSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = ('email',)
+
+    # def validate(self, attrs):
+    #     email = attrs.get('email')
+    #     print(email)
+    #     user = User.objects.filter(email=email)
+    #     print(user)
+    #     if user is None:
+    #         raise serializers.ValidationError('A user with this email is not found.')
+    #
+    #     return user
+
+
+class NewPasswordSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = ('password',)
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        return password

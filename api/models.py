@@ -18,13 +18,3 @@ class PropertyAddress(models.Model):
 class PropertyImage(models.Model):
     propertyAddress = models.ForeignKey(PropertyAddress, default=None, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='property_images')
-
-
-class PropertyReview(models.Model):
-    content = models.CharField(verbose_name='content', max_length=2000)
-    rating = models.PositiveSmallIntegerField(verbose_name='rating')
-    propertyAddress = models.ForeignKey(PropertyAddress, related_name='reviews', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name='reviews', on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = (('propertyAddress', 'user'))

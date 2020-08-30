@@ -4,9 +4,34 @@ from django.contrib.auth.models import update_last_login
 
 from rest_framework import serializers
 
-from .models import User
+from .models import User, UserReview
 from api.serializers import PropertyAddressSerializer
 from api.models import PropertyAddress
+
+
+class UserReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserReview
+        fields = '__all__'
+
+    def validate(self, attrs):
+        reviewingUser = attrs.get('reviewingUser')
+        reviewedUser = attrs.get('reviewedUser')
+        if reviewedUser == reviewingUser:
+            raise serializers.ValidationError('You cannot review yourself!')
+        return attrs
+
+    def create(self, validated_data):
+        review = UserReview.objects.create(**validated_data)
+        return review
+
+
+class UserSerializer(serializers.ModelSerializer):
+    properties = PropertyAddressSerializer(many=True, required=True)
+    reviewedUser = UserReviewSerializer(many=True, required=True)
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'phone_number', 'image', 'properties', 'reviewedUser')
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -18,14 +43,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         client = User.objects.create(**validated_data)
         return client
-
-
-class UserSerializer(serializers.ModelSerializer):
-    properties = PropertyAddressSerializer(many=True, required=True)
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'image', 'properties')
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -84,3 +101,5 @@ class NewPasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         password = attrs.get('password')
         return password
+
+

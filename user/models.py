@@ -57,4 +57,12 @@ class User(AbstractUser):
         return self.email
 
 
+class UserReview(models.Model):
+    content = models.CharField(verbose_name='content', max_length=2000)
+    rating = models.PositiveSmallIntegerField(verbose_name='rating')
+    reviewingUser = models.ForeignKey(User, related_name='reviewingUser', on_delete=models.CASCADE)
+    reviewedUser = models.ForeignKey(User, related_name='reviewedUser', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('reviewingUser', 'reviewedUser'))
 

@@ -11,12 +11,12 @@ class PropertyImageSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id', 'username', 'email', 'phone_number', 'image')
 
 
 class PropertyAddressSerializer(serializers.ModelSerializer):
     images = PropertyImageSerializer(many=True, required=False)
-    user = UserSerializer(required=False)
+    user = UserSerializer(required=True)
     class Meta:
         model = PropertyAddress
         fields = ('id', 'city', 'country', 'property_description', 'full_address',
@@ -29,4 +29,3 @@ class CreatePropertyAddressSerializer(serializers.ModelSerializer):
         model = PropertyAddress
         fields = ('id', 'city', 'country', 'property_description', 'full_address',
                   'latitude', 'longitude', 'images', 'user')
-

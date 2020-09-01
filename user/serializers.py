@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
     reviewedUser = UserReviewSerializer(many=True, required=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'image', 'properties', 'reviewedUser')
+        fields = ('id', 'email', 'phone_number', 'image', 'properties', 'reviewedUser')
 
 
 class RegisterSerializer(serializers.ModelSerializer):

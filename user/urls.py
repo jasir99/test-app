@@ -11,6 +11,7 @@ urlpatterns = [
     path('user/make/password', views.SetNewPassword.as_view(), name='newPassword'),
     path('user/review/', views.UserReviewAPI.as_view(), name='user/review'),
     path('user/review/<int:pk>/', views.UserReviewAPI.as_view(), name='user/review/pk'),
+    path('user/retrieve/<int:pk>/', views.RetrieveUserAPI.as_view(), name='user/retrieve/pk'),
 ]
 
 # router = DefaultRouter()

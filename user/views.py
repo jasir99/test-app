@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 
 from .forms import EmailValidator, PhoneValidator
-from .models import UserReview
+from .models import UserReview, User
 from .serializers import RegisterSerializer, UserSerializer, LoginSerializer,ResetPasswordEmailRequestSerializer, UserReviewSerializer
 
 '''
@@ -124,6 +124,20 @@ class SetNewPassword(APIView):
             request.user.auth_token.delete()
             return JsonResponse({'status': True, 'msg': 'Password changed'}, status=200)
         return JsonResponse({'status': False, 'msg':'No token was provided'}, status=401)
+
+
+class RetrieveUserAPI(APIView):
+    def get_queryset(self, pk):
+        if pk is None:
+            self.queryset = User.objects.all()
+        else:
+            self.queryset = User.objects.filter(id=pk)
+
+    def get(self, request, pk=None):
+        self.get_queryset(pk)
+        serializer = UserSerializer(self.queryset, many=True)
+        return JsonResponse(
+            {'status': True, 'msg': 'Succesfully retrived categories', 'data': serializer.data})
 
 
 class UserReviewAPI(APIView):

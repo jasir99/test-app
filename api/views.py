@@ -3,8 +3,8 @@ from django.http import JsonResponse
 
 from rest_framework import viewsets
 
-from .models import PropertyAddress, PropertyImage, PropertyReview
-from .serializers import PropertyAddressSerializer, PropertyImageSerializer, PropertyReviewSerializer
+from .models import PropertyAddress, PropertyImage
+from .serializers import PropertyAddressSerializer, PropertyImageSerializer
 
 
 from utils.convertAddress import reverseAddress, getCity
@@ -87,27 +87,3 @@ class PropertyImageView(viewsets.ViewSet):
         image.delete()
         return JsonResponse({'delete': True, 'data': serializer.data})
 
-
-class PropertyReviewView(viewsets.ViewSet):
-    def list(self, request):
-        queryset = PropertyReview.objects.all()
-        review_serializer_class = PropertyReviewSerializer(queryset, many=True)
-        return JsonResponse(
-            {'status': True, 'msg': 'Succesfully retrived categories', 'data': review_serializer_class.data})
-
-    def retrieve(self, request, pk=None):
-        queryset = PropertyReview.objects.filter(propertyAddress=pk)
-        review_serializer_class = PropertyReviewSerializer(queryset, many=True)
-        return JsonResponse({'status': True, 'data': review_serializer_class.data})
-
-    def create(self, request):
-
-        user = self.request.user
-
-        data = request.data
-        data['user'] = user.id
-        review_serializer_class = PropertyReviewSerializer(data=data)
-        if review_serializer_class.is_valid():
-            review_serializer_class.save()
-            return JsonResponse({'status': True, 'data': review_serializer_class.data}, status=200)
-        return JsonResponse({'status': False, 'data': review_serializer_class.errors}, status=400)

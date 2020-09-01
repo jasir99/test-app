@@ -3,9 +3,9 @@ from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 
-from .forms import EmailValidator, UserNameValidator, PhoneValidator
-
-from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
+from .forms import EmailValidator, PhoneValidator
+from .models import UserReview
+from .serializers import RegisterSerializer, UserSerializer, LoginSerializer,ResetPasswordEmailRequestSerializer, UserReviewSerializer
 
 '''
   A class for registering users
@@ -61,12 +61,8 @@ class LoginAPI(ObtainAuthToken):
                 'token': token.key,
                 'user': {
                     'userId': user.pk,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
                     'username': user.username,
                     'email': user.email,
-                    # 'address1': user.address1,
-                    # 'address2': user.address2,
                     'phone_number': user.phone_number,
                     'properties': properties
                 },
@@ -106,3 +102,63 @@ class UserAPI(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class RequestPasswordResetEmailAPI(APIView):
+  def post(self,request,*args,**kwargs):
+    serializer = ResetPasswordEmailRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data
+        token, create = Token.objects.get_or_create(user=user)
+        return JsonResponse({ 'status': True, 'data': token.key, 'msg': 'We have sent you a link to reset your password!' }, status=200)
+    return JsonResponse({'status': False, 'msg': 'No registered user with this email!'}, status=400)
+
+
+class SetNewPassword(APIView):
+    def post(self, request):
+        user = self.request.user
+        if not user.is_anonymous:
+            password = request.data['password']
+            user.set_password(password)
+            user.save()
+            request.user.auth_token.delete()
+            return JsonResponse({'status': True, 'msg': 'Password changed'}, status=200)
+        return JsonResponse({'status': False, 'msg':'No token was provided'}, status=401)
+
+
+class UserReviewAPI(APIView):
+    def get_queryset(self, pk):
+        if pk is None:
+            self.queryset = UserReview.objects.all()
+        else:
+            self.queryset = UserReview.objects.filter(reviewedUser=pk)
+
+    def get(self, request, pk=None):
+        self.get_queryset(pk)
+        review_serializer_class = UserReviewSerializer(self.queryset, many=True)
+        return JsonResponse(
+            {'status': True, 'msg': 'Succesfully retrived categories', 'data': review_serializer_class.data})
+
+
+    def post(self, request):
+        user = self.request.user
+
+        data = request.data
+        data['reviewingUser'] = user.id
+
+        review_serializer_class = UserReviewSerializer(data=data)
+
+        review_serializer_class.is_valid(raise_exception=True)
+        review = review_serializer_class.save()
+        if review:
+            data = {
+                'review': {
+                    'id': review.pk,
+                    'reviewedUser': review.reviewedUser.pk,
+                    'reviewingUser': review.reviewingUser.pk,
+                    'content': review.content,
+                    'rating': review.rating,
+                },
+            }
+            return JsonResponse({'status': True, 'data': data}, status=200)
+        return JsonResponse({'status': False, 'data': review_serializer_class.errors}, status=400)

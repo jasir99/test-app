@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework import viewsets
 
 from .models import PropertyAddress, PropertyImage
-from .serializers import PropertyAddressSerializer, PropertyImageSerializer
+from .serializers import PropertyAddressSerializer, PropertyImageSerializer, CreatePropertyAddressSerializer
 
 
 from utils.convertAddress import reverseAddress, getCity
@@ -46,7 +46,7 @@ class PropertyAddressView(viewsets.ViewSet):
         if 'description' in request.data:
             data['property_description'] = request.data['description']
 
-        address_serializer_class = PropertyAddressSerializer(data=data)
+        address_serializer_class = CreatePropertyAddressSerializer(data=data)
 
         if address_serializer_class.is_valid():
             address_serializer_class.save()
